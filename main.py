@@ -180,7 +180,7 @@ def create_figure():
 
 
 def update(attr, old, new):
-    Col2.children[1] = create_figure()
+    Col2.children[2] = create_figure()
 
 
 description_of_variable = TextInput(value = str(df_desc['Description'].values) , title = "Description de la varibale choisie :")
