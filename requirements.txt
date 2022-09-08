@@ -1,1 +1,3 @@
-
+bokeh==2.3.3
+gdown==4.5.1
+pandas-bokeh==0.5.5
