@@ -39,7 +39,7 @@ if os.path.isfile('./application_proba_prediction.csv') == False:
 
 import shutil
 
-if os.path.isfile('./Projet+Mise+en+prod+-+home-credit-default-risk.zip') == False:
+if os.path.isfile('./Projet+Mise+en+prod+-+home-credit-default-risk.zip') == True:
   shutil.unpack_archive('Projet+Mise+en+prod+-+home-credit-default-risk.zip', './')
 
 data_prediction = pd.read_csv("./application_proba_prediction.csv")
