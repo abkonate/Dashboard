@@ -13,18 +13,8 @@ from bokeh.models import CheckboxGroup, CustomJS
 from bokeh.io import curdoc
 from bokeh.models import PreText
 from bokeh.models.widgets import TextInput
-import pandas_bokeh
 import os
 import gdown
-from bokeh.models import CustomJS, ColumnDataSource, Select, Column
-from bokeh.plotting import figure, show
-from bokeh.models.widgets import Div
-from bokeh.models.widgets import Paragraph
-from bokeh.models.widgets import PreText
-from bokeh.layouts import row
-from bokeh.models.widgets import TextInput
-import pandas_bokeh
-from bokeh.io import curdoc
 
 
 if os.path.isfile('./Projet+Mise+en+prod+-+home-credit-default-risk.zip') == False:
@@ -193,17 +183,6 @@ info_of_customer = Div(text=(df_aux.T).to_html(index=True), width=550)
 Title2 = Div(text=""" <h1> La probabilité du risque de remboursement est estimée à  </h1>""" , width=800, height=100)
 
 proba_remb = TextInput(value = str(0.5) , title = "")
-
-def variable_choisie(attrname, old, new):
-  p_scatter = df_train_var.plot_bokeh.scatter(
-    figsize=(900, 600),
-    x="TARGET",
-    y= select2.value,
-    category="TARGET",
-    title="Variable choisie en fonction target",
-    #size="CNT_CHILDREN",
-    show_figure=False
-    )
   
 def client_choisi(attrname, old, new):
   df_aux = df [df['SK_ID_CURR'] == int(select.value)]
