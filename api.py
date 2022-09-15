@@ -8,84 +8,132 @@ from enum import Enum, IntEnum
 from fastapi import FastAPI
 from pydantic import BaseModel
 from enum import Enum
+import pandas as pd
+import numpy as np
 
 app = FastAPI()
 
-class CountryEnum(str, Enum):
-    India = "India"
-    China = "China"
-    Russia = "Russia"
 
-class Bar(BaseModel):
-  AMT_INCOME_TOTAL:float
-  AMT_CREDIT:float
-  AMT_ANNUITY: float
-  AMT_GOODS_PRICE: float
-  REGION_POPULATION_RELATIVE: float
-  DAYS_REGISTRATION: float
-  OWN_CAR_AGE : float
-  CNT_FAM_MEMBERS: float
-  EXT_SOURCE_1: float
-  EXT_SOURCE_2: float
-  EXT_SOURCE_3: float
-  APARTMENTS_AVG: float
-  BASEMENTAREA_AVG: float
-  YEARS_BEGINEXPLUATATION_AVG: float
-  YEARS_BUILD_AVG: float
-  COMMONAREA_AVG: float
-  ELEVATORS_AVG: float
-  ENTRANCES_AVG: float
-  FLOORSMAX_AVG: float
-  FLOORSMIN_AVG: float
-  LANDAREA_AVG: float
-  LIVINGAPARTMENTS_AVG: float
-  LIVINGAREA_AVG: float
-  NONLIVINGAPARTMENTS_AVG: float
-  NONLIVINGAREA_AVG: float
-  APARTMENTS_MODE: float
-  BASEMENTAREA_MODE: float
-  YEARS_BEGINEXPLUATATION_MODE: float
-  YEARS_BUILD_MODE: float
-  COMMONAREA_MODE: float
-  ELEVATORS_MODE: float
-  ENTRANCES_MODE: float
-  FLOORSMAX_MODE: float
-  FLOORSMIN_MODE: float
-  LANDAREA_MODE: float
-  LIVINGAPARTMENTS_MODE: float
-  LIVINGAREA_MODE: float
-  NONLIVINGAPARTMENTS_MODE: float
-  NONLIVINGAREA_MODE: float
-  APARTMENTS_MEDI: float
-  BASEMENTAREA_MEDI: float
-  YEARS_BEGINEXPLUATATION_MEDI: float
-  YEARS_BUILD_MEDI: float
-  COMMONAREA_MEDI: float
-  ELEVATORS_MEDI: float
-  ENTRANCES_MEDI: float
-  FLOORSMAX_MEDI: float
-  FLOORSMIN_MEDI: float
-  LANDAREA_MEDI: float
-  LIVINGAPARTMENTS_MEDI: float
-  LIVINGAREA_MEDI: float
-  NONLIVINGAPARTMENTS_MEDI: float
-  NONLIVINGAREA_MEDI: float
-  TOTALAREA_MODE: float
-  OBS_30_CNT_SOCIAL_CIRCLE: float
-  DEF_30_CNT_SOCIAL_CIRCLE: float
-  OBS_60_CNT_SOCIAL_CIRCLE: float
-  DEF_60_CNT_SOCIAL_CIRCLE: float
-  DAYS_LAST_PHONE_CHANGE: float
-  AMT_REQ_CREDIT_BUREAU_HOUR: float
-  AMT_REQ_CREDIT_BUREAU_DAY: float
-  AMT_REQ_CREDIT_BUREAU_WEEK: float
-  AMT_REQ_CREDIT_BUREAU_MON : float
-  AMT_REQ_CREDIT_BUREAU_QRT: float
-  AMT_REQ_CREDIT_BUREAU_YEAR: float
-  CNT_CHILDREN: int
-  DAYS_BIRTH : int
-  DAYS_EMPLOYED: int
-  DAYS_ID_PUBLISH: int
+most_frequent_cat = {'EMERGENCYSTATE_MODE':'No', 'OCCUPATION_TYPE':'Laborers', 'NAME_TYPE_SUITE':'Unaccompanied', 'NAME_CONTRACT_TYPE': 'Cash loans', \
+                     'CODE_GENDER': 'F', 'FLAG_OWN_CAR': 'N', 'FLAG_OWN_REALTY': 'Y', 'WEEKDAY_APPR_PROCESS_START': 'TUESDAY', \
+                     'ORGANIZATION_TYPE': 'Business Entity Type 3', 'NAME_FAMILY_STATUS':'Married', 'NAME_EDUCATION_TYPE':'Secondary / secondary special',\
+                     'NAME_INCOME_TYPE':'Working'  
+                     }
+
+discrete_var = ['CNT_CHILDREN',
+                'FLAG_DOCUMENT_8',
+                'FLAG_DOCUMENT_3',
+                'FLAG_DOCUMENT_5',
+                'FLAG_DOCUMENT_6',
+                'FLAG_DOCUMENT_7',
+                'FLAG_DOCUMENT_9',
+                'FLAG_DOCUMENT_21',
+                'FLAG_DOCUMENT_11',
+                'FLAG_DOCUMENT_13',
+                'FLAG_DOCUMENT_14',
+                'FLAG_DOCUMENT_15',
+                'FLAG_DOCUMENT_16',
+                'FLAG_DOCUMENT_17',
+                'FLAG_DOCUMENT_18',
+                'FLAG_DOCUMENT_19',
+                'FLAG_DOCUMENT_20',
+                'FLAG_PHONE',
+                'LIVE_CITY_NOT_WORK_CITY',
+                'REG_CITY_NOT_WORK_CITY',
+                'REG_CITY_NOT_LIVE_CITY',
+                'LIVE_REGION_NOT_WORK_REGION',
+                'REG_REGION_NOT_WORK_REGION',
+                'REG_REGION_NOT_LIVE_REGION',
+                'HOUR_APPR_PROCESS_START',
+                'REGION_RATING_CLIENT_W_CITY',
+                'REGION_RATING_CLIENT',
+                'FLAG_EMAIL',
+                'FLAG_CONT_MOBILE',
+                'FLAG_WORK_PHONE',
+                'FLAG_EMP_PHONE',
+                'DAYS_ID_PUBLISH',
+                'DAYS_EMPLOYED',
+                'DAYS_BIRTH']
+
+
+var_objet = ['EMERGENCYSTATE_MODE',
+             'OCCUPATION_TYPE',
+             'NAME_TYPE_SUITE',
+             'NAME_CONTRACT_TYPE',
+             'CODE_GENDER',
+             'FLAG_OWN_CAR',
+             'FLAG_OWN_REALTY',
+             'WEEKDAY_APPR_PROCESS_START',
+             'ORGANIZATION_TYPE',
+             'NAME_FAMILY_STATUS',
+             'NAME_EDUCATION_TYPE',
+             'NAME_INCOME_TYPE']
+
+continuous_data = ['FLOORSMAX_MODE',
+                   'FLOORSMAX_MEDI',
+                   'FLOORSMAX_AVG',
+                   'YEARS_BEGINEXPLUATATION_MODE',
+                   'YEARS_BEGINEXPLUATATION_MEDI',
+                   'YEARS_BEGINEXPLUATATION_AVG',
+                   'TOTALAREA_MODE',
+                   'EXT_SOURCE_3',
+                   'AMT_REQ_CREDIT_BUREAU_MON',
+                   'AMT_REQ_CREDIT_BUREAU_QRT',
+                   'AMT_REQ_CREDIT_BUREAU_YEAR',
+                   'OBS_30_CNT_SOCIAL_CIRCLE',
+                   'DEF_30_CNT_SOCIAL_CIRCLE',
+                   'OBS_60_CNT_SOCIAL_CIRCLE',
+                   'DEF_60_CNT_SOCIAL_CIRCLE',
+                   'EXT_SOURCE_2',
+                   'AMT_GOODS_PRICE',
+                   'AMT_ANNUITY',
+                   'CNT_FAM_MEMBERS',
+                   'DAYS_LAST_PHONE_CHANGE',
+                   'AMT_CREDIT',
+                   'AMT_INCOME_TOTAL',
+                   'DAYS_REGISTRATION',
+                   'REGION_POPULATION_RELATIVE']
+
+
+from pickle import load
+from sklearn.impute import SimpleImputer as imputer
+
+discrete_variable_trans = load(open('data/scaler_discrete.pkl', 'rb'))
+
+con_variable_trans = load(open('data/scaler_continu.pkl', 'rb'))
+
+object_variable_trans = load(open('data/scaler_object.pkl', 'rb'))
+
+cat_col_transformation = {}
+
+
+cat_col_transformation['EMERGENCYSTATE_MODE'] =  load(open('data/EMERGENCYSTATE_MODE.pkl', 'rb'))
+cat_col_transformation['OCCUPATION_TYPE'] = load(open('data/OCCUPATION_TYPE.pkl', 'rb'))
+cat_col_transformation['NAME_TYPE_SUITE'] =  load(open('data/NAME_TYPE_SUITE.pkl', 'rb'))
+cat_col_transformation['NAME_CONTRACT_TYPE']=  load(open('data/NAME_CONTRACT_TYPE.pkl', 'rb'))
+cat_col_transformation['CODE_GENDER'] =  load(open('data/CODE_GENDER.pkl', 'rb'))
+cat_col_transformation['FLAG_OWN_CAR']= load(open('data/FLAG_OWN_CAR.pkl', 'rb'))
+cat_col_transformation['FLAG_OWN_REALTY'] =  load(open('data/FLAG_OWN_REALTY.pkl', 'rb'))
+cat_col_transformation['WEEKDAY_APPR_PROCESS_START'] =  load(open('data/WEEKDAY_APPR_PROCESS_START.pkl', 'rb'))
+cat_col_transformation['ORGANIZATION_TYPE']=  load(open('data/ORGANIZATION_TYPE.pkl', 'rb'))
+cat_col_transformation['NAME_FAMILY_STATUS']  = load(open('data/NAME_FAMILY_STATUS.pkl', 'rb'))
+cat_col_transformation['NAME_EDUCATION_TYPE'] =  load(open('data/NAME_EDUCATION_TYPE.pkl', 'rb'))
+cat_col_transformation['NAME_INCOME_TYPE']= load(open('data/NAME_INCOME_TYPE.pkl', 'rb'))
+
+
+from sklearn.preprocessing import StandardScaler, MinMaxScaler 
+
+scaler = load(open('scaler_metric.pkl', 'rb'))
+
+from lightgbm import LGBMClassifier as lgb
+import joblib
+
+
+model1 =  joblib.load('model1.pkl')
+model2 =  joblib.load('model2.pkl')
+model3 =  joblib.load('model3.pkl')
+model4 =  joblib.load('model4.pkl') 
+
 
 class Item(BaseModel):
     name: str
@@ -413,8 +461,8 @@ class EMERGENCYSTATE_MODE(str, Enum):
     No = "No"
     Yes = "Yes"
     
-@app.get("/emps/by-country")
-def empByCountryName(countryName:Union[CountryEnum,None]= None, flag_mobil:Union[FLAG_MOBIL,None]= None, FLAG_EMP_PHONE:Union[FLAG_EMP_PHONE,None]= None,\
+@app.get("/pred")
+def empByCountryName(flag_mobil:Union[FLAG_MOBIL,None]= None, FLAG_EMP_PHONE:Union[FLAG_EMP_PHONE,None]= None,\
                      flag_CONT_MOBILE:Union[FLAG_CONT_MOBILE,None]= None, FLAG_WORK_PHONE:Union[FLAG_WORK_PHONE,None]= None,\
                      FLAG_PHONE:Union[FLAG_PHONE,None]= None, FLAG_EMAIL:Union[FLAG_EMAIL,None]= None,\
                      FLAG_DOCUMENT_2:Union[FLAG_DOCUMENT_2,None]= None, FLAG_DOCUMENT_3:Union[FLAG_DOCUMENT_3,None]= None,\
@@ -476,64 +524,68 @@ def empByCountryName(countryName:Union[CountryEnum,None]= None, flag_mobil:Union
                      LIVE_REGION_NOT_WORK_REGION: Union[LIVE_REGION_NOT_WORK_REGION, None] = None, HOUR_APPR_PROCESS_START: Union[int, None] = None,\
                      REGION_RATING_CLIENT_W_CITY: Union[int, None] = None, REGION_RATING_CLIENT: Union[int, None] = None
                      ):
-    return {"FLOORSMAX_MODE":FLOORSMAX_MODE, "FLOORSMAX_MEDI":FLOORSMAX_MEDI, "FLOORSMAX_AVG":FLOORSMAX_AVG,\
-            "YEARS_BEGINEXPLUATATION_MODE":YEARS_BEGINEXPLUATATION_MODE, "YEARS_BEGINEXPLUATATION_MEDI":YEARS_BEGINEXPLUATATION_MEDI,\
-            "YEARS_BEGINEXPLUATATION_AVG":YEARS_BEGINEXPLUATATION_AVG, "TOTALAREA_MODE":TOTALAREA_MODE, "EMERGENCYSTATE_MODE":EMERGENCYSTATE_MODE,\
-            "OCCUPATION_TYPE":OCCUPATION_TYPE, "EXT_SOURCE_3":EXT_SOURCE_3, "AMT_REQ_CREDIT_BUREAU_MON":AMT_REQ_CREDIT_BUREAU_MON,\
-            "AMT_REQ_CREDIT_BUREAU_QRT":AMT_REQ_CREDIT_BUREAU_QRT, "AMT_REQ_CREDIT_BUREAU_YEAR":AMT_REQ_CREDIT_BUREAU_YEAR,\
-            "NAME_TYPE_SUITE":NAME_TYPE_SUITE, "OBS_30_CNT_SOCIAL_CIRCLE":OBS_30_CNT_SOCIAL_CIRCLE, "DEF_30_CNT_SOCIAL_CIRCLE":DEF_30_CNT_SOCIAL_CIRCLE,\
-            "OBS_60_CNT_SOCIAL_CIRCLE":OBS_60_CNT_SOCIAL_CIRCLE, "DEF_60_CNT_SOCIAL_CIRCLE":DEF_60_CNT_SOCIAL_CIRCLE, "EXT_SOURCE_2":EXT_SOURCE_2,
-            "AMT_GOODS_PRICE":AMT_GOODS_PRICE, "AMT_ANNUITY":AMT_ANNUITY, "CNT_FAM_MEMBERS":CNT_FAM_MEMBERS, "DAYS_LAST_PHONE_CHANGE":DAYS_LAST_PHONE_CHANGE,\
-            "CNT_CHILDREN":CNT_CHILDREN, "FLAG_DOCUMENT_8":FLAG_DOCUMENT_8, "NAME_CONTRACT_TYPE":NAME_CONTRACT_TYPE, "CODE_GENDER":CODE_GENDER,\
-            "FLAG_OWN_CAR":FLAG_OWN_CAR, "FLAG_DOCUMENT_3":FLAG_DOCUMENT_3, "FLAG_DOCUMENT_5":FLAG_DOCUMENT_5, "FLAG_DOCUMENT_6":FLAG_DOCUMENT_6,\
-            "FLAG_DOCUMENT_7":FLAG_DOCUMENT_7, "FLAG_DOCUMENT_9":FLAG_DOCUMENT_9, "FLAG_DOCUMENT_21":FLAG_DOCUMENT_21, "FLAG_DOCUMENT_11":FLAG_DOCUMENT_11,\
-            "FLAG_OWN_REALTY":FLAG_OWN_REALTY, "FLAG_DOCUMENT_13":FLAG_DOCUMENT_13, "FLAG_DOCUMENT_14":FLAG_DOCUMENT_14, "FLAG_DOCUMENT_15":FLAG_DOCUMENT_15,\
-            "FLAG_DOCUMENT_16":FLAG_DOCUMENT_16, "FLAG_DOCUMENT_17":FLAG_DOCUMENT_17, "FLAG_DOCUMENT_18":FLAG_DOCUMENT_18,"FLAG_DOCUMENT_19":FLAG_DOCUMENT_19,\
-            "FLAG_DOCUMENT_20":FLAG_DOCUMENT_20,"AMT_CREDIT":AMT_CREDIT, "AMT_INCOME_TOTAL":AMT_INCOME_TOTAL, "FLAG_PHONE":FLAG_PHONE,\
-            "LIVE_CITY_NOT_WORK_CITY":LIVE_CITY_NOT_WORK_CITY, "REG_CITY_NOT_WORK_CITY":REG_CITY_NOT_WORK_CITY, "REG_CITY_NOT_LIVE_CITY":REG_CITY_NOT_LIVE_CITY,\
-            "LIVE_REGION_NOT_WORK_REGION":LIVE_REGION_NOT_WORK_REGION, "REG_REGION_NOT_WORK_REGION":REG_REGION_NOT_WORK_REGION,\
-            "REG_REGION_NOT_LIVE_REGION":REG_REGION_NOT_LIVE_REGION, "HOUR_APPR_PROCESS_START":HOUR_APPR_PROCESS_START,\
-            "WEEKDAY_APPR_PROCESS_START":WEEKDAY_APPR_PROCESS_START, "REGION_RATING_CLIENT_W_CITY":REGION_RATING_CLIENT_W_CITY,\
-            "REGION_RATING_CLIENT":REGION_RATING_CLIENT, "FLAG_EMAIL":FLAG_EMAIL, "FLAG_CONT_MOBILE":flag_CONT_MOBILE,\
-            "ORGANIZATION_TYPE":ORGANIZATION_TYPE, "FLAG_WORK_PHONE":FLAG_WORK_PHONE, "FLAG_EMP_PHONE":FLAG_EMP_PHONE, "DAYS_ID_PUBLISH":DAYS_ID_PUBLISH,\
-            "DAYS_REGISTRATION":DAYS_REGISTRATION,"DAYS_EMPLOYED":DAYS_EMPLOYED,"DAYS_BIRTH":DAYS_BIRTH,"REGION_POPULATION_RELATIVE":REGION_POPULATION_RELATIVE,\
-            "NAME_FAMILY_STATUS":NAME_FAMILY_STATUS, "NAME_EDUCATION_TYPE":NAME_EDUCATION_TYPE, "NAME_INCOME_TYPE":NAME_INCOME_TYPE
-    }
+    values_dict =  {"FLOORSMAX_MODE":FLOORSMAX_MODE, "FLOORSMAX_MEDI":FLOORSMAX_MEDI, "FLOORSMAX_AVG":FLOORSMAX_AVG,\
+                    "YEARS_BEGINEXPLUATATION_MODE":YEARS_BEGINEXPLUATATION_MODE, "YEARS_BEGINEXPLUATATION_MEDI":YEARS_BEGINEXPLUATATION_MEDI,\
+                    "YEARS_BEGINEXPLUATATION_AVG":YEARS_BEGINEXPLUATATION_AVG, "TOTALAREA_MODE":TOTALAREA_MODE, "EMERGENCYSTATE_MODE":EMERGENCYSTATE_MODE,\
+                    "OCCUPATION_TYPE":OCCUPATION_TYPE, "EXT_SOURCE_3":EXT_SOURCE_3, "AMT_REQ_CREDIT_BUREAU_MON":AMT_REQ_CREDIT_BUREAU_MON,\
+                    "AMT_REQ_CREDIT_BUREAU_QRT":AMT_REQ_CREDIT_BUREAU_QRT, "AMT_REQ_CREDIT_BUREAU_YEAR":AMT_REQ_CREDIT_BUREAU_YEAR,\
+                    "NAME_TYPE_SUITE":NAME_TYPE_SUITE, "OBS_30_CNT_SOCIAL_CIRCLE":OBS_30_CNT_SOCIAL_CIRCLE, "DEF_30_CNT_SOCIAL_CIRCLE":DEF_30_CNT_SOCIAL_CIRCLE,\
+                    "OBS_60_CNT_SOCIAL_CIRCLE":OBS_60_CNT_SOCIAL_CIRCLE, "DEF_60_CNT_SOCIAL_CIRCLE":DEF_60_CNT_SOCIAL_CIRCLE, "EXT_SOURCE_2":EXT_SOURCE_2,
+                    "AMT_GOODS_PRICE":AMT_GOODS_PRICE, "AMT_ANNUITY":AMT_ANNUITY, "CNT_FAM_MEMBERS":CNT_FAM_MEMBERS, "DAYS_LAST_PHONE_CHANGE":DAYS_LAST_PHONE_CHANGE,\
+                    "CNT_CHILDREN":CNT_CHILDREN, "FLAG_DOCUMENT_8":FLAG_DOCUMENT_8, "NAME_CONTRACT_TYPE":NAME_CONTRACT_TYPE, "CODE_GENDER":CODE_GENDER,\
+                    "FLAG_OWN_CAR":FLAG_OWN_CAR, "FLAG_DOCUMENT_3":FLAG_DOCUMENT_3, "FLAG_DOCUMENT_5":FLAG_DOCUMENT_5, "FLAG_DOCUMENT_6":FLAG_DOCUMENT_6,\
+                    "FLAG_DOCUMENT_7":FLAG_DOCUMENT_7, "FLAG_DOCUMENT_9":FLAG_DOCUMENT_9, "FLAG_DOCUMENT_21":FLAG_DOCUMENT_21, "FLAG_DOCUMENT_11":FLAG_DOCUMENT_11,\
+                    "FLAG_OWN_REALTY":FLAG_OWN_REALTY, "FLAG_DOCUMENT_13":FLAG_DOCUMENT_13, "FLAG_DOCUMENT_14":FLAG_DOCUMENT_14, "FLAG_DOCUMENT_15":FLAG_DOCUMENT_15,\
+                    "FLAG_DOCUMENT_16":FLAG_DOCUMENT_16, "FLAG_DOCUMENT_17":FLAG_DOCUMENT_17, "FLAG_DOCUMENT_18":FLAG_DOCUMENT_18,"FLAG_DOCUMENT_19":FLAG_DOCUMENT_19,\
+                    "FLAG_DOCUMENT_20":FLAG_DOCUMENT_20,"AMT_CREDIT":AMT_CREDIT, "AMT_INCOME_TOTAL":AMT_INCOME_TOTAL, "FLAG_PHONE":FLAG_PHONE,\
+                    "LIVE_CITY_NOT_WORK_CITY":LIVE_CITY_NOT_WORK_CITY, "REG_CITY_NOT_WORK_CITY":REG_CITY_NOT_WORK_CITY, "REG_CITY_NOT_LIVE_CITY":REG_CITY_NOT_LIVE_CITY,\
+                    "LIVE_REGION_NOT_WORK_REGION":LIVE_REGION_NOT_WORK_REGION, "REG_REGION_NOT_WORK_REGION":REG_REGION_NOT_WORK_REGION,\
+                    "REG_REGION_NOT_LIVE_REGION":REG_REGION_NOT_LIVE_REGION, "HOUR_APPR_PROCESS_START":HOUR_APPR_PROCESS_START,\
+                    "WEEKDAY_APPR_PROCESS_START":WEEKDAY_APPR_PROCESS_START, "REGION_RATING_CLIENT_W_CITY":REGION_RATING_CLIENT_W_CITY,\
+                    "REGION_RATING_CLIENT":REGION_RATING_CLIENT, "FLAG_EMAIL":FLAG_EMAIL, "FLAG_CONT_MOBILE":flag_CONT_MOBILE,\
+                    "ORGANIZATION_TYPE":ORGANIZATION_TYPE, "FLAG_WORK_PHONE":FLAG_WORK_PHONE, "FLAG_EMP_PHONE":FLAG_EMP_PHONE, "DAYS_ID_PUBLISH":DAYS_ID_PUBLISH,\
+                    "DAYS_REGISTRATION":DAYS_REGISTRATION,"DAYS_EMPLOYED":DAYS_EMPLOYED,"DAYS_BIRTH":DAYS_BIRTH,"REGION_POPULATION_RELATIVE":REGION_POPULATION_RELATIVE,\
+                    "NAME_FAMILY_STATUS":NAME_FAMILY_STATUS, "NAME_EDUCATION_TYPE":NAME_EDUCATION_TYPE, "NAME_INCOME_TYPE":NAME_INCOME_TYPE
+                  }
 
-@app.post('/predict')
-def predict(data : Bar, AMT_INCOME_TOTAL:float, AMT_CREDIT:float, AMT_ANNUITY: float):
+    modified_values={}
+
+    modified_values = values_dict.copy()
     
-    return { 'AMT_INCOME_TOTAL' : data.AMT_INCOME_TOTAL}
+    
+    for el in var_objet:
+        if modified_values[el] == None:
+            modified_values[el] = most_frequent_cat[el]
+        
+
+    for keys, val in modified_values.items():
+        if val == None :
+            modified_values[keys] = np.nan
 
 
-@app.put("/emps")
-def empByCountryName(countryName: CountryEnum, flag_mobil:FLAG_MOBIL, flag_EMP_PHONE:FLAG_EMP_PHONE, flag_CONT_MOBILE:FLAG_CONT_MOBILE,\
-                     FLAG_WORK_PHONE:FLAG_WORK_PHONE, FLAG_PHONE:FLAG_PHONE, FLAG_EMAIL:FLAG_EMAIL,\
-                     FLAG_DOCUMENT_2:FLAG_DOCUMENT_2, FLAG_DOCUMENT_3:FLAG_DOCUMENT_3,\
-                     FLAG_DOCUMENT_4:FLAG_DOCUMENT_4, FLAG_DOCUMENT_5:FLAG_DOCUMENT_5,\
-                     FLAG_DOCUMENT_6:FLAG_DOCUMENT_6, FLAG_DOCUMENT_7:FLAG_DOCUMENT_7, FLAG_DOCUMENT_8:FLAG_DOCUMENT_8,\
-                     FLAG_DOCUMENT_9:FLAG_DOCUMENT_9, FLAG_DOCUMENT_10:FLAG_DOCUMENT_10, FLAG_DOCUMENT_11:FLAG_DOCUMENT_11,\
-                     FLAG_DOCUMENT_12:FLAG_DOCUMENT_12, FLAG_DOCUMENT_13:FLAG_DOCUMENT_13, FLAG_DOCUMENT_14:FLAG_DOCUMENT_14,\
-                     FLAG_DOCUMENT_15:FLAG_DOCUMENT_15, FLAG_DOCUMENT_16:FLAG_DOCUMENT_16, FLAG_DOCUMENT_17:FLAG_DOCUMENT_17,\
-                     FLAG_DOCUMENT_18:FLAG_DOCUMENT_18, FLAG_DOCUMENT_19:FLAG_DOCUMENT_19, FLAG_DOCUMENT_20:FLAG_DOCUMENT_20,\
-                     FLAG_DOCUMENT_21:FLAG_DOCUMENT_21, NAME_TYPE_SUITE:NAME_TYPE_SUITE, NAME_INCOME_TYPE:NAME_INCOME_TYPE,\
-                     NAME_CONTRACT_TYPE:NAME_CONTRACT_TYPE, CODE_GENDER:CODE_GENDER, FLAG_OWN_CAR:FLAG_OWN_CAR, FLAG_OWN_REALTY:FLAG_OWN_REALTY,\
-                     NAME_EDUCATION_TYPE:NAME_EDUCATION_TYPE,NAME_FAMILY_STATUS:NAME_FAMILY_STATUS, NAME_HOUSING_TYPE:NAME_HOUSING_TYPE,\
-                     OCCUPATION_TYPE:OCCUPATION_TYPE, bar:Bar,\
-                     WEEKDAY_APPR_PROCESS_START:WEEKDAY_APPR_PROCESS_START, ORGANIZATION_TYPE:ORGANIZATION_TYPE, FONDKAPREMONT_MODE:FONDKAPREMONT_MODE,\
-                     HOUSETYPE_MODE:HOUSETYPE_MODE, WALLSMATERIAL_MODE:WALLSMATERIAL_MODE, EMERGENCYSTATE_MODE:EMERGENCYSTATE_MODE
-                     ):
-    return {"countryName":countryName, "FLAG_MOBIL":flag_mobil, "FLAG_WORK_PHONE":FLAG_WORK_PHONE, "FLAG_PHONE":FLAG_PHONE, "FLAG_EMAIL":FLAG_EMAIL,\
-                     "FLAG_DOCUMENT_2":FLAG_DOCUMENT_2, "FLAG_DOCUMENT_3":FLAG_DOCUMENT_3,\
-                     "FLAG_DOCUMENT_4":FLAG_DOCUMENT_4, "FLAG_DOCUMENT_5":FLAG_DOCUMENT_5,\
-                     "FLAG_DOCUMENT_6":FLAG_DOCUMENT_6, "FLAG_DOCUMENT_7":FLAG_DOCUMENT_7, "FLAG_DOCUMENT_8":FLAG_DOCUMENT_8,\
-                     "FLAG_DOCUMENT_9":FLAG_DOCUMENT_9, "FLAG_DOCUMENT_10":FLAG_DOCUMENT_10, "FLAG_DOCUMENT_11":FLAG_DOCUMENT_11,\
-                     "FLAG_DOCUMENT_12":FLAG_DOCUMENT_12, "FLAG_DOCUMENT_13":FLAG_DOCUMENT_13, "FLAG_DOCUMENT_14":FLAG_DOCUMENT_14,\
-                     "FLAG_DOCUMENT_15":FLAG_DOCUMENT_15, "FLAG_DOCUMENT_16":FLAG_DOCUMENT_16, "FLAG_DOCUMENT_17":FLAG_DOCUMENT_17,\
-                     "FLAG_DOCUMENT_18":FLAG_DOCUMENT_18, "FLAG_DOCUMENT_19":FLAG_DOCUMENT_19, "FLAG_DOCUMENT_20":FLAG_DOCUMENT_20,\
-                     "FLAG_DOCUMENT_21":FLAG_DOCUMENT_21, "NAME_TYPE_SUITE":NAME_TYPE_SUITE, "NAME_INCOME_TYPE":NAME_INCOME_TYPE,\
-                     "NAME_CONTRACT_TYPE":NAME_CONTRACT_TYPE, "CODE_GENDER":CODE_GENDER, "FLAG_OWN_CAR":FLAG_OWN_CAR, "FLAG_OWN_REALTY":FLAG_OWN_REALTY,\
-                     "NAME_EDUCATION_TYPE":NAME_EDUCATION_TYPE,"NAME_FAMILY_STATUS":NAME_FAMILY_STATUS, "NAME_HOUSING_TYPE":NAME_HOUSING_TYPE,\
-                     "OCCUPATION_TYPE":OCCUPATION_TYPE,\
-                     "WEEKDAY_APPR_PROCESS_START":WEEKDAY_APPR_PROCESS_START, "ORGANIZATION_TYPE":ORGANIZATION_TYPE, "FONDKAPREMONT_MODE":FONDKAPREMONT_MODE,\
-                     "HOUSETYPE_MODE":HOUSETYPE_MODE, "WALLSMATERIAL_MODE":WALLSMATERIAL_MODE, "EMERGENCYSTATE_MODE":EMERGENCYSTATE_MODE}
+    data = pd.DataFrame([modified_values])
+
+    data[var_objet] = object_variable_trans.transform(data[var_objet])
+
+    data[continuous_data] = con_variable_trans.transform(data[continuous_data])
+
+
+    data[discrete_var] = discrete_variable_trans.transform(data[discrete_var])
+
+    for col in var_objet:
+      data[col] = cat_col_transformation[col].transform(data[col])
+        
+    
+    print(data[var_objet])
+
+
+    data = scaler.transform(data)
+
+    proba_estimation = (model1.predict_proba(data) + model2.predict_proba(data) +model3.predict_proba(data) +model4.predict_proba(data))/4
+
+    #print(proba_estimation[0][1])
+
+    return {'la probabilte du risque':  proba_estimation[0][1]}
+
+
+
