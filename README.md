@@ -3,5 +3,5 @@ dashboard
 https://fast-basin-49763.herokuapp.com
 
 
+![Capture d’écran de 2022-10-25 11-45-37](https://user-images.githubusercontent.com/50117341/197741382-e70bfac2-3ff9-4c77-b032-66b2699b016a.png)
 
-![Capture d’écran de 2022-10-25 11-43-41](https://user-images.githubusercontent.com/50117341/197741070-98af5a9a-eea2-42b1-b260-86ab3158cbcb.png)
